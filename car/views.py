@@ -13,6 +13,7 @@ from .utils import *
 class CarHome(DataMixin, ListView):
     model = Car
     template_name = 'car/index.html'
+    context_object_name = 'posts'
 
 
     def get_context_data(self, *, object_list=None, **kwargs):

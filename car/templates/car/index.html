@@ -3,11 +3,15 @@
 {% block content %}
 <h1>{{title}}</h1>
 <ul>
-    {% for p in object_list %}
+    {% for p in posts %}
     <li>
         <h2>{{p.title}}</h2>
         <p>{{p.content}}</p>
-        <hr>
+        {% autoescape on %}
+
+	{% endautoescape %}
+			<div class="clear"></div>
+			<p class="link-read-post"><a href="{{ p.get_absolute_url }}">Читать пост</a></p>
     </li>
     {% endfor %}
 </ul>
