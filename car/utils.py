@@ -6,6 +6,7 @@ menu = [{'title': "о сайте", 'url_name': 'about'},
         {'title': "Bойти", 'url_name': 'login'},
 ]
 
+
 class DataMixin:
     def get_user_context(self, **kwargs) -> dict:
         context = kwargs

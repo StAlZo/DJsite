@@ -10,7 +10,7 @@ class Car(models.Model):
     content = models.TextField(blank=True, verbose_name='Контент')
     photo = models.ImageField(upload_to="photos/%y/%m/%d/", verbose_name='Фото')
     is_published = models.BooleanField(default=True, verbose_name='Публикация')
-    category_id = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name='Категория')
+    category_id = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name='Категория', null=True)
 
     def __str__(self):
         return self.title
@@ -22,6 +22,7 @@ class Car(models.Model):
         verbose_name = 'Машины'
         verbose_name_plural = 'Машины'
         ordering = ['title']
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, db_index=True, verbose_name='Категория')

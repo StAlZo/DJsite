@@ -19,9 +19,12 @@ from django.urls import path, include
 
 from educational_project import settings
 
+from car.views import CarAPIView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('car.urls'))
+    # path('', include('car.urls'))
+    path('api/v1/carlist/', CarAPIView.as_view())
 ]
 
 if settings.DEBUG:

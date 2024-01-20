@@ -1,93 +1,119 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
-
-from .forms import *
-from .models import *
-from .utils import *
-# Create your views here.
-
-
-
-class CarHome(DataMixin, ListView):
-    model = Car
-    template_name = 'car/index.html'
-    context_object_name = 'posts'
-
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title="Главная страница")
-        return dict(list(context.items()) + list(c_def.items()))
-
-    def get_queryset(self):
-        return Car.objects.filter(is_published=True)
-
-# def index(request):
-#     post = Car.objects.all()
-#     context = {'post': post,
-#                'title': 'Glavnaya stranica',
-#                "menu": menu,
-#     }
-#     return render(request, 'car/index.html',context=context)
-
-def about(request):
-    return render(request, 'car/about.html')
-
-def categories(request, bmw):
-    return HttpResponse(f"<h1>Статьи по категориям</h1><p>{bmw}</p> ")
-
-# def addpage(request):
-#     if request.method == 'POST':
-#         form = AddPostForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('home')
-#     else:
-#         form = AddPostForm()
-#     return render(request, 'car/addpage.html', {'form': form, 'menu': menu, 'title': 'добавление статьи'})
-
-def contact(request):
-    return HttpResponse("contact")
-
-def login(request):
-    return HttpResponse("login")
-
-def show_category(request, cat_id):
-    return HttpResponse(f"category id={cat_id}")
-
-# def show_post(request, post_id):
-#     post = get_object_or_404(Car, pk=post_id)
+# from django.shortcuts import render, redirect, get_object_or_404
+# from django.http import HttpResponse
+# from django.urls import reverse_lazy
+# from django.views.generic import ListView, DetailView, CreateView
 #
-#     context = {
-#         'post': post,
-#         'menu': menu,
-#         'title': post.cat_id,
-#         'cat_selected': 1,
-#     }
-#     return render(request, 'car/post.html', context=context)
+# from .forms import *
+from django.forms import model_to_dict
 
-class ShowPost(DataMixin, DetailView):
-    model = Car
-    template_name = 'car/post.html'
-    slug_url_kwarg = 'post_slug'
-    context_object_name = 'post'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = context['post']
-        context['menu'] = menu
-        return context
+from .models import *
+# from .utils import *
+# Create your views here.
+from rest_framework import generics
+from .serializers import CarSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
-class AddPage(DataMixin, CreateView):
-    form_class = AddPostForm
-    template_name = 'car/addpage.html'
-    success_url = reverse_lazy('home')
+class CarAPIView(APIView):
+    def get(self, requests):
+        lst = Car.objects.all()
+        return Response({'posts': CarSerializer(lst, many=True).data})
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Добавление статьи'
-        context['menu'] = menu
-        return context
+    def post(self, requests):
+        serializer = CarSerializer(data=requests.data)
+        serializer.is_valid(raise_exception=True)
+
+        post_new = Car.objects.create(
+            title=requests.data['title'],
+            content=requests.data['content'],
+            category_id=requests.data['cat_id']
+        )
+        return Response({'post': CarSerializer(post_new).data})
+
+# class CarAPIView(generics.ListAPIView):
+#     queryset = Car.objects.all()
+#     serializer_class = CarSerializer
+
+# class CarHome(DataMixin, ListView):
+#     model = Car
+#     template_name = 'car/index.html'
+#     context_object_name = 'posts'
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         c_def = self.get_user_context(title="Главная страница")
+#         return dict(list(context.items()) + list(c_def.items()))
+#
+#     def get_queryset(self):
+#         return Car.objects.filter(is_published=True)
+#
+# # def index(request):
+# #     post = Car.objects.all()
+# #     context = {'post': post,
+# #                'title': 'Glavnaya stranica',
+# #                "menu": menu,
+# #     }
+# #     return render(request, 'car/index.html',context=context)
+#
+# def about(request):
+#     return render(request, 'car/about.html')
+#
+# def categories(request, bmw):
+#     return HttpResponse(f"<h1>Статьи по категориям</h1><p>{bmw}</p> ")
+#
+# # def addpage(request):
+# #     if request.method == 'POST':
+# #         form = AddPostForm(request.POST, request.FILES)
+# #         if form.is_valid():
+# #             form.save()
+# #             return redirect('home')
+# #     else:
+# #         form = AddPostForm()
+# #     return render(request, 'car/addpage.html', {'form': form, 'menu': menu, 'title': 'добавление статьи'})
+#
+# def contact(request):
+#     return HttpResponse("contact")
+#
+# def login(request):
+#     return HttpResponse("login")
+#
+# def show_category(request, cat_id):
+#     return HttpResponse(f"category id={cat_id}")
+#
+# # def show_post(request, post_id):
+# #     post = get_object_or_404(Car, pk=post_id)
+# #
+# #     context = {
+# #         'post': post,
+# #         'menu': menu,
+# #         'title': post.cat_id,
+# #         'cat_selected': 1,
+# #     }
+# #     return render(request, 'car/post.html', context=context)
+#
+#
+# class ShowPost(DataMixin, DetailView):
+#     model = Car
+#     template_name = 'car/post.html'
+#     slug_url_kwarg = 'post_slug'
+#     context_object_name = 'post'
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['title'] = context['post']
+#         context['menu'] = menu
+#         return context
+#
+#
+# class AddPage(DataMixin, CreateView):
+#     form_class = AddPostForm
+#     template_name = 'car/addpage.html'
+#     success_url = reverse_lazy('home')
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['title'] = 'Добавление статьи'
+#         context['menu'] = menu
+#         return context
+
