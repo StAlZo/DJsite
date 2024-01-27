@@ -10,12 +10,19 @@ from .models import *
 # from .utils import *
 # Create your views here.
 from rest_framework import generics
-from .serializers import CarSerializer
+from .serializers import CarSerializer, CarSerializ
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
+class CarApi(generics.ListAPIView):
+    """2-3 video"""
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+
+
 class CarAPIView(APIView):
+    """4 video"""
     def get(self, requests):
         lst = Car.objects.all()
         return Response({'posts': CarSerializer(lst, many=True).data})
@@ -31,6 +38,32 @@ class CarAPIView(APIView):
         )
         return Response({'post': CarSerializer(post_new).data})
 
+
+class CarAP(APIView):
+    """5 video"""
+    def get(self, requests):
+        lst = Car.objects.all()
+        return Response({'posts': CarSerializer(lst, many=True).data})
+
+    def post(self, requests):
+        serializer = CarSerializ(data=requests.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'post': serializer.data})
+
+    def put(self,requests, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUD syety navel"})
+        try:
+            instance = Car.objects.get(pk=pk)
+        except:
+            return Response({"error": "Object does not exists"})
+
+        serializer = CarSerializ(data=requests.data, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"post": serializer.data})
 # class CarAPIView(generics.ListAPIView):
 #     queryset = Car.objects.all()
 #     serializer_class = CarSerializer
