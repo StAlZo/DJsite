@@ -10,7 +10,7 @@ from .models import *
 # from .utils import *
 # Create your views here.
 from rest_framework import generics
-from .serializers import CarSerializer, CarSerializ
+from .serializers import CarSerializer, CarSerializ, CarSeriali
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -43,7 +43,7 @@ class CarAP(APIView):
     """5 video"""
     def get(self, requests):
         lst = Car.objects.all()
-        return Response({'posts': CarSerializer(lst, many=True).data})
+        return Response({'posts': CarSerializ(lst, many=True).data})
 
     def post(self, requests):
         serializer = CarSerializ(data=requests.data)
@@ -64,6 +64,48 @@ class CarAP(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"post": serializer.data})
+
+
+class CarA(APIView):
+    """6 video"""
+    def get(self, requests):
+        lst = Car.objects.all()
+        return Response({'posts': CarSeriali(lst, many=True).data})
+
+    def post(self, requests):
+        serializer = CarSeriali(data=requests.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'post': serializer.data})
+
+    def put(self, requests, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUD syety navel"})
+        try:
+            instance = Car.objects.get(pk=pk)
+        except:
+            return Response({"error": "Object does not exists"})
+
+        serializer = CarSeriali(data=requests.data, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"post": serializer.data})
+
+
+class CarAPIList(generics.ListCreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSeriali
+
+
+class CarAPIUpdate(generics.UpdateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSeriali
+
+
+class CarAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSeriali
 # class CarAPIView(generics.ListAPIView):
 #     queryset = Car.objects.all()
 #     serializer_class = CarSerializer

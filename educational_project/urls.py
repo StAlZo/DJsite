@@ -19,14 +19,18 @@ from django.urls import path, include
 
 from educational_project import settings
 
-from car.views import CarAPIView, CarApi, CarAP
+from car.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('', include('car.urls'))
     path('api/v1/carlist/', CarAPIView.as_view()),
     path('api/v2/carlist/', CarApi.as_view()), #4 vido
-    path('api/v3/carlist/<int:pk>/', CarAP.as_view())  #5 video
+    path('api/v3/carlist/<int:pk>/', CarAP.as_view()),  #5 video
+    path('api/v4/carlist/', CarA.as_view()),  #6 video
+    path('api/v4.0.1/carlist/', CarAPIList.as_view()),
+    path('api/v4.0.2/carlistput/<int:pk>/', CarAPIUpdate.as_view()),
+    path('api/v4.1.0/carlist/<int:pk>/', CarAPIDetailView.as_view()),
 ]
 
 if settings.DEBUG:

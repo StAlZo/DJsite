@@ -51,6 +51,12 @@ class CarSerializ(serializers.Serializer):
         return instance
 
 
+class CarSeriali(serializers.ModelSerializer):
+    """6 video"""
+    class Meta:
+        model = Car
+        fields = ("title", "content", "category_id", "slug")
+
 # def encode():
 #     model = CarModel('e39', 'pizda che za tachka')
 #     model_sr = CarSerializer(model)
