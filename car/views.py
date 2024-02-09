@@ -5,11 +5,12 @@
 #
 # from .forms import *
 from django.forms import model_to_dict
+from rest_framework.decorators import action
 
 from .models import *
 # from .utils import *
 # Create your views here.
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from .serializers import CarSerializer, CarSerializ, CarSeriali
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -106,6 +107,31 @@ class CarAPIUpdate(generics.UpdateAPIView):
 class CarAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSeriali
+
+
+class CarViewSet(viewsets.ModelViewSet):
+    """8 video"""
+    queryset = Car.objects.all()
+    serializer_class = CarSeriali
+
+
+class CarViewSet1(viewsets.ModelViewSet):
+    """9 video"""
+    #queryset = Car.objects.all()
+    serializer_class = CarSeriali
+
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        if not pk:
+            return Car.objects.all()[:3]
+
+        return Car.objects.filter(pk=pk)
+
+    @action(methods=['get'], detail=True)
+    def category(self, requests, pk=None):
+        cats = Category.objects.get(pk=pk)
+        return Response({'cats': cats.name})
+
 # class CarAPIView(generics.ListAPIView):
 #     queryset = Car.objects.all()
 #     serializer_class = CarSerializer

@@ -20,6 +20,14 @@ from django.urls import path, include
 from educational_project import settings
 
 from car.views import *
+from rest_framework import routers
+
+
+router = routers.SimpleRouter()
+router.register(r'car', CarViewSet)
+
+router1 = routers.DefaultRouter()
+router1.register(r'car', CarViewSet1, basename='car')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +39,10 @@ urlpatterns = [
     path('api/v4.0.1/carlist/', CarAPIList.as_view()),
     path('api/v4.0.2/carlistput/<int:pk>/', CarAPIUpdate.as_view()),
     path('api/v4.1.0/carlist/<int:pk>/', CarAPIDetailView.as_view()),
+    path('api/v4.2.0/carlist/', CarViewSet.as_view({'get': 'list'})),  #8 video
+    path('api/v4.2.0/carlist/<int:pk>/', CarViewSet.as_view({'put': 'update'})),  #8 video
+    path('api/v4.2.1/', include(router.urls)),  #9 video
+    path('api/v4.2.2/', include(router1.urls))
 ]
 
 if settings.DEBUG:
