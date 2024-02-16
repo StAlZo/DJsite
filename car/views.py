@@ -6,6 +6,7 @@
 # from .forms import *
 from django.forms import model_to_dict
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import *
 # from .utils import *
@@ -124,13 +125,13 @@ class CarViewSet1(viewsets.ModelViewSet):
     """9 video"""
     #queryset = Car.objects.all()
     serializer_class = CarSeriali
-    premission_classes = (IsAdminOrReadOnly, IsOwnerOrReadOnly)
+    premission_classes = (IsAdminOrReadOnly, IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly)
 
 
     def get_queryset(self):
         pk = self.kwargs.get("pk")
         if not pk:
-            return Car.objects.all()[:3]
+            return Car.objects.all()
 
         return Car.objects.filter(pk=pk)
 
