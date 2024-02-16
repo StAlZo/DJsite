@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
@@ -11,6 +12,7 @@ class Car(models.Model):
     photo = models.ImageField(upload_to="photos/%y/%m/%d/", verbose_name='Фото')
     is_published = models.BooleanField(default=True, verbose_name='Публикация')
     category_id = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name='Категория', null=True)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

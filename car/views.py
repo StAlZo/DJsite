@@ -11,6 +11,8 @@ from .models import *
 # from .utils import *
 # Create your views here.
 from rest_framework import generics, viewsets
+
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import CarSerializer, CarSerializ, CarSeriali
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -102,23 +104,28 @@ class CarAPIList(generics.ListCreateAPIView):
 class CarAPIUpdate(generics.UpdateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSeriali
+    premission_clases = (IsOwnerOrReadOnly, )
 
 
 class CarAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSeriali
+    premission_classes = (IsAdminOrReadOnly,)
 
 
 class CarViewSet(viewsets.ModelViewSet):
     """8 video"""
     queryset = Car.objects.all()
     serializer_class = CarSeriali
+    premission_classes = (IsAdminOrReadOnly,)
 
 
 class CarViewSet1(viewsets.ModelViewSet):
     """9 video"""
     #queryset = Car.objects.all()
     serializer_class = CarSeriali
+    premission_classes = (IsAdminOrReadOnly, IsOwnerOrReadOnly)
+
 
     def get_queryset(self):
         pk = self.kwargs.get("pk")
